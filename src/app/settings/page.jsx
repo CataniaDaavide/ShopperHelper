@@ -47,7 +47,7 @@ export default function SettingsPage() {
     <div className="w-screen h-screen flex flex-col">
       {/* Header */}
       <div className="p-3 flex justify-between gap-3 border-b">
-        <div className="flex items-center gap-3"> 
+        <div className="flex items-center gap-3">
           <Link href={"/"}>
             <ChevronLeft className="w-5 h-5" />
           </Link>
@@ -81,7 +81,8 @@ export default function SettingsPage() {
             </label>
             <Input
               id="mealVoucherValue"
-              type="number"
+              type="tel"
+              inputMode="decimal"
               value={settings.mealVoucherValue}
               onChange={handleMealVoucherValueChange}
               placeholder="Inserisci il valore"
