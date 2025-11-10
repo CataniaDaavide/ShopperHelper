@@ -5,13 +5,92 @@ import { ButtonGroup } from "@/components/ui/button-group";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Euro, Plus, Settings, Trash } from "lucide-react";
+import { Euro, EuroIcon, Minus, Plus, Settings, Trash } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import { Description } from "@radix-ui/react-dialog";
+import QuantityButton from "@/components/quantity-button";
 //#endregion
 
 export default function Home() {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState([
+    {
+      description: "aaaaaa",
+      price: 20.5,
+      quantity: 2,
+      flag: true,
+    },
+    {
+      description: "aaaaaa",
+      price: 20.5,
+      quantity: 2,
+      flag: true,
+    },
+    {
+      description: "aaaaaa",
+      price: 20.5,
+      quantity: 2,
+      flag: true,
+    },
+    {
+      description: "aaaaaa",
+      price: 20.5,
+      quantity: 2,
+      flag: true,
+    },
+    {
+      description: "aaaaaa",
+      price: 20.5,
+      quantity: 2,
+      flag: true,
+    },
+    {
+      description: "aaaaaa",
+      price: 20.5,
+      quantity: 2,
+      flag: true,
+    },
+    {
+      description: "aaaaaa",
+      price: 20.5,
+      quantity: 2,
+      flag: true,
+    },
+    {
+      description: "aaaaaa",
+      price: 20.5,
+      quantity: 2,
+      flag: true,
+    },
+    {
+      description: "aaaaaa",
+      price: 20.5,
+      quantity: 2,
+      flag: true,
+    },
+    {
+      description: "aaaaaa",
+      price: 20.5,
+      quantity: 2,
+      flag: true,
+    },
+    {
+      description: "aaaaaa",
+      price: 20.5,
+      quantity: 2,
+      flag: true,
+    },
+  ]);
 
   return (
     <div className="w-screen h-screen flex flex-col items-center">
@@ -40,96 +119,108 @@ function Navbar() {
 function ProductContainer({ products, setProducts }) {
   return (
     <div className="w-full h-full flex flex-col items-center">
-      {products.length != 0 ? (
+      {products.length == 0 ? (
         <div className="w-full flex flex-col items-center gap-3">
           <p>
             Usa il pulsante "Aggiungi prodotto" per inserre nella lista i
             prodotti
           </p>
-          <Button className={"cursor-pointer"}>
-            <Plus /> Aggiungi prodotto
-          </Button>
+          <AddProducts />
         </div>
       ) : (
-        <div className="w-full flex justify-between">
-          <p>Prodotti</p>
-          <DeleteListBtn />
+        <div className="w-full flex flex-col gap-6">
+          <div className="w-full flex items-center justify-between pb-5">
+            <p className="text-lg font-bold">Prodotti</p>
+            <div className="flex gap-6">
+              <AddProducts />
+              <DeleteListBtn />
+            </div>
+          </div>
+          <div className="flex flex-col gap-6">
+              {products &&
+                products.map((item, index) => {
+                  const [quantity, setQuantity] = useState(item.quantity);
+
+                  return (
+                    <div key={index} className="w-full flex justify-between gap-3">
+                      <div className="flex items-center gap-3">
+                        <Checkbox />
+                        <span>{item.description}</span>
+                      </div>
+                      <div className="flex gap-3">
+                        <ButtonGroup>
+                          <Button variant={"outline"}>{item.price}</Button>
+                          <Button variant={"outline"}>
+                            <EuroIcon />
+                          </Button>
+                        </ButtonGroup>
+                        <QuantityButton quantity={quantity} setQuantity={setQuantity} />
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
         </div>
       )}
-
-      <Checkbox id="terms-2" defaultChecked />
-      <Input />
-
-      <ButtonGroup>
-        <Input />
-        <Button variant={"outline"}>
-          <Euro />
-        </Button>
-      </ButtonGroup>
-
-      <ButtonGroup>
-        <Button variant="outline">
-          <Plus />
-        </Button>
-        <Button variant="outline">{"1"}</Button>
-        <Button variant="outline">
-          <Plus />
-        </Button>
-      </ButtonGroup>
-      {/* {products.map((p, i) => {
-        return <ProductCard data={p} index={i} key={i} />;
-      })} */}
     </div>
   );
 }
 
-function DeleteListBtn({ products, setProducts }) {
-  const handleBtn = (e) => {
-    try {
-      alert("da completare");
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
+function DeleteListBtn() {
   return (
-    <Button onClick={handleBtn} size={"icon"} variant={"outline"}>
+    <Button
+      variant={"outline"}
+      size={"icon"}
+      className={"cursor-pointer hover:text-red-500"}
+    >
       <Trash />
     </Button>
   );
 }
 
-function ProductCard({ data, index }) {
-  const { name, price, quantity } = data;
+function AddProducts({ product, setProducts }) {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{name}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <p>PRICE:{price}</p>
-        <p>
-          QUANTITY;
-          {quantity}
-        </p>
-        <p>
-          INDEX:
-          {index}
-        </p>
-      </CardContent>
-    </Card>
+    <Drawer open={isOpen} onOpenChange={setIsOpen}>
+      <DrawerTrigger asChild>
+        <Button>Aggiungi prodotti</Button>
+      </DrawerTrigger>
+
+      <DrawerContent className={"flex items-center justify-center"}>
+        <div className="w-full max-w-md">
+          <DrawerHeader>
+            <DrawerTitle>Aggiungi prodotto</DrawerTitle>
+            <DrawerDescription>
+              Inserisci le informazioni del prodotto
+            </DrawerDescription>
+          </DrawerHeader>
+
+          <InputContainer />
+
+          <DrawerFooter>
+            <Button onClick={() => setIsOpen(false)}>Aggiungi</Button>
+            <DrawerClose asChild>
+              <Button variant="outline" className="w-full">
+                Cancel
+              </Button>
+            </DrawerClose>
+          </DrawerFooter>
+        </div>
+      </DrawerContent>
+    </Drawer>
   );
 }
 
-function ProductInput({ setProducts }) {
-  const nameRef = useRef();
+function InputContainer({ products, setProducts }) {
+  const desciptionRef = useRef();
   const priceRef = useRef();
-  const quantityRef = useRef();
+  const [quantity, setQuantity] = useState(1);
 
   // evento al render del componente
   useEffect(() => {
     priceRef.current.value = "0";
-    quantityRef.current.value = "1";
+    setQuantity(1);
   }, []);
 
   const handleKeyPress = (e) => {
@@ -139,8 +230,6 @@ function ProductInput({ setProducts }) {
       if (e.target.id == "product") {
         priceRef.current.focus();
       } else if (e.target.id == "price") {
-        quantityRef.current.focus();
-      } else if (e.target.id == "quantity") {
         handleSubmit();
       }
     } catch (error) {
@@ -152,29 +241,28 @@ function ProductInput({ setProducts }) {
   const handleSubmit = (e) => {
     try {
       // recupera i valori dei campi
-      const name = nameRef.current.value;
+      const desciption = desciptionRef.current.value;
       const price = priceRef.current.value;
-      var quantity = quantityRef.current.value;
 
       // se i campi sono vuoti esce
-      if (name == "" || price == "") return;
+      if (desciption == "" || price == "") return;
 
       // se quantity è vuoto imposta con valore 1
       if (quantity == "") {
-        quantity = 1;
+        setQuantity(1);
       }
 
       // creazione prodotto
       const newProducts = {
-        name: name,
+        desciption: name,
         price: parseFloat(price),
         quantity: parseInt(quantity),
       };
 
       //reset campi di input
-      nameRef.current.value = "";
+      desciptionRef.current.value = "";
       priceRef.current.value = "0";
-      quantity.current.value = "1";
+      setQuantity(1);
       setProducts((prev) => [...prev, newProducts]);
     } catch (error) {
       console.log(error);
@@ -182,32 +270,32 @@ function ProductInput({ setProducts }) {
   };
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-3 p-4">
       <div className="flex flex-col gap-1">
-        <span>Nome prodotto</span>
-        <Input id="product" ref={nameRef} onKeyPress={handleKeyPress} />
+        <span>Descrizione</span>
+        <Input
+          ref={desciptionRef}
+          placeholder="Inserisci descrizione"
+          onKeyPress={handleKeyPress}
+        />
       </div>
       <div className="flex flex-col gap-1">
         <span>Prezzo</span>
-        <Input
-          id="price"
-          type="tel"
-          ref={priceRef}
-          onKeyPress={handleKeyPress}
-        />
+        <div className="flex gap-6">
+          <ButtonGroup>
+            <Input
+              ref={priceRef}
+              placeholder="Inserisci prezzo"
+              type={"tel"}
+              onKeyPress={handleKeyPress}
+            />
+            <Button variant={"outline"}>
+              <EuroIcon />
+            </Button>
+          </ButtonGroup>
+          <QuantityButton quantity={quantity} setQuantity={setQuantity} />
+        </div>
       </div>
-      <div className="flex flex-col gap-1">
-        <span>Quantità</span>
-        <Input
-          id="quantity"
-          type="tel"
-          ref={quantityRef}
-          onKeyPress={handleKeyPress}
-        />
-      </div>
-      <Button className={"cursor-pointer"} onClick={handleSubmit}>
-        Inserisci
-      </Button>
     </div>
   );
 }
