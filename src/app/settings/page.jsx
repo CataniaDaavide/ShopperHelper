@@ -7,6 +7,7 @@ import { Switch } from "@/components/ui/switch";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { ModeToggle } from "@/components/mode-toggle";
 
 export default function SettingsPage() {
   const [settings, setSettings] = useState({
@@ -45,11 +46,15 @@ export default function SettingsPage() {
   return (
     <div className="w-screen h-screen flex flex-col">
       {/* Header */}
-      <div className="p-3 flex items-center gap-3 border-b border">
-        <Link href={"/"}>
-          <ChevronLeft className="w-5 h-5" />
-        </Link>
-        <p className="font-bold text-lg">Impostazioni</p>
+      <div className="p-3 flex justify-between gap-3 border-b">
+        <div className="flex items-center gap-3"> 
+          <Link href={"/"}>
+            <ChevronLeft className="w-5 h-5" />
+          </Link>
+          <p className="font-bold text-lg">Impostazioni</p>
+        </div>
+
+        <ModeToggle />
       </div>
 
       {/* Content */}

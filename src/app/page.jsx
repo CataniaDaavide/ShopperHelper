@@ -40,7 +40,7 @@ import { ModeToggle } from "@/components/mode-toggle";
 //#region Navbar
 function Navbar() {
   return (
-    <div className="p-3 w-full flex items-center justify-between gap-3 border-b border">
+    <div className="p-3 w-full flex items-center justify-between gap-3 border-b">
       <div className="flex gap-3">
         <ShoppingBag />
         <p className="font-bold text-lg">Shopper Helper</p>
