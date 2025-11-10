@@ -47,7 +47,7 @@ export default function QuantityButton({ quantity, setQuantity }) {
       </Button>
       <Input
         variant="outline"
-        className="w-[50px]"
+        className="w-full max-w-[50px]"
         ref={quantityRef}
         onChange={handleChange}
         value={quantity}
