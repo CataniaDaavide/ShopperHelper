@@ -1,5 +1,6 @@
+import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
-import { Toaster } from "sonner";
+import { ToasterClient } from "@/components/toaster-client";
 
 export const metadata = {
   title: "ShopperHelper",
@@ -8,11 +9,19 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+
   return (
-    <html lang="en" className="dark">
+    <html lang="en" suppressHydrationWarning>
       <body className={`antialiased`}>
-        {children}
-        <Toaster theme="dark"/>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+          <ToasterClient />
+        </ThemeProvider>
       </body>
     </html>
   );

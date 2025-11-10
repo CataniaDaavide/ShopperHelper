@@ -34,6 +34,7 @@ import {
   ProductsContext,
   ProductsProvider,
 } from "@/components/products-context";
+import { ModeToggle } from "@/components/mode-toggle";
 //#endregion
 
 //#region Navbar
@@ -44,11 +45,14 @@ function Navbar() {
         <ShoppingBag />
         <p className="font-bold text-lg">Shopper Helper</p>
       </div>
-      <Link href={"/settings"}>
-        <Button size={"icon"} variant={"outline"}>
-          <Settings />
-        </Button>
-      </Link>
+      <div className="flex gap-3">
+        <ModeToggle />
+        <Link href={"/settings"}>
+          <Button size={"icon"} variant={"outline"}>
+            <Settings />
+          </Button>
+        </Link>
+      </div>
     </div>
   );
 }
@@ -87,7 +91,11 @@ function ProductContainer() {
 
   // Calcolo importo mancante per il multiplo del buono pasto
   let remaining = 0;
-  if (settings.mealVoucherEnabled && settings.mealVoucherValue > 0 && total > 0) {
+  if (
+    settings.mealVoucherEnabled &&
+    settings.mealVoucherValue > 0 &&
+    total > 0
+  ) {
     const modulo = total % settings.mealVoucherValue;
     remaining = modulo === 0 ? 0 : settings.mealVoucherValue - modulo;
   }
@@ -113,7 +121,6 @@ function ProductContainer() {
     </div>
   );
 }
-
 
 function NoProducts() {
   return (
