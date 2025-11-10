@@ -1,5 +1,5 @@
-import { ProductsProvider } from "@/components/products-context";
 import "./globals.css";
+import { Toaster } from "sonner";
 
 export const metadata = {
   title: "ShopperHelper",
@@ -10,7 +10,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className="dark">
-      <body className={`antialiased`}>{children}</body>
+      <body className={`antialiased`}>
+        {children}
+        <Toaster theme="dark"/>
+      </body>
     </html>
   );
 }

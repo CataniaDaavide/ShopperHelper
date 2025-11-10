@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { EuroIcon, Settings, Trash } from "lucide-react";
+import { EuroIcon, Settings, ShoppingBag, Trash } from "lucide-react";
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
 import {
@@ -27,17 +27,23 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
 import QuantityButton from "@/components/quantity-button";
 import { Spinner } from "@/components/ui/spinner";
-import { ProductsContext, ProductsProvider } from "@/components/products-context";
+import {
+  ProductsContext,
+  ProductsProvider,
+} from "@/components/products-context";
 //#endregion
 
 //#region Navbar
 function Navbar() {
   return (
-    <div className="w-full h-20 flex items-center justify-between gap-3 p-3">
-      <p className="font-bold">ShopperHelper</p>
+    <div className="p-3 w-full flex items-center justify-between gap-3 border-b border">
+      <div className="flex gap-3">
+        <ShoppingBag />
+        <p className="font-bold text-lg">Shopper Helper</p>
+      </div>
       <Link href={"/settings"}>
         <Button size={"icon"} variant={"outline"}>
           <Settings />
@@ -51,7 +57,7 @@ function Navbar() {
 export default function Home() {
   return (
     <ProductsProvider>
-      <div className="w-screen h-screen flex flex-col items-center">
+      <div className="w-screen h-screen flex flex-col gap-6 items-center">
         <Navbar />
         <ProductContainer />
       </div>
@@ -63,22 +69,55 @@ export default function Home() {
 function ProductContainer() {
   const { products } = useContext(ProductsContext);
 
+  const [settings, setSettings] = useState({
+    mealVoucherEnabled: false,
+    mealVoucherValue: 0,
+  });
+
+  // Recupera settings dal localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem("settings");
+    if (stored) setSettings(JSON.parse(stored));
+  }, []);
+
   if (!products) return <Spinner />;
 
+  // Calcolo spesa totale
+  const total = products.reduce((acc, p) => acc + p.price * p.quantity, 0);
+
+  // Calcolo importo mancante per il multiplo del buono pasto
+  let remaining = 0;
+  if (settings.mealVoucherEnabled && settings.mealVoucherValue > 0 && total > 0) {
+    const modulo = total % settings.mealVoucherValue;
+    remaining = modulo === 0 ? 0 : settings.mealVoucherValue - modulo;
+  }
+
   return (
-    <div className="w-full max-w-xl flex-1 flex flex-col">
+    <div className="w-full max-w-xl flex-1 flex flex-col px-3">
       <div className="w-full flex justify-between pb-5">
         <AddProducts />
         <DeleteListBtn />
       </div>
+
+      {/* Totale spesa */}
+      <div className="w-full flex gap-3 items-center justify-end mb-3">
+        <p className="font-bold text-lg">Totale: €{total.toFixed(2)}</p>
+        {settings.mealVoucherEnabled && remaining > 0 && (
+          <p className="text-orange-500 font-semibold">
+            €{remaining.toFixed(2)}
+          </p>
+        )}
+      </div>
+
       {products.length === 0 ? <NoProducts /> : <ListProducts />}
     </div>
   );
 }
 
+
 function NoProducts() {
   return (
-    <div className="w-full flex flex-col items-center gap-3 mt-5">
+    <div className="w-full flex flex-col items-center gap-3">
       <p className="text-gray-500">
         Usa il pulsante "Aggiungi prodotto" per inserire prodotti nella lista
       </p>
@@ -104,25 +143,28 @@ function ListProducts() {
   };
 
   return (
-    <div className="flex-1 overflow-y-auto">
+    <div className="flex-1 overflow-y-auto flex flex-col gap-6">
       {products.map((item, index) => (
-        <div key={index} className="w-full h-10 grid grid-cols-2">
+        <div key={index} className="w-full grid grid-cols-2 gap-3">
           <div className="flex gap-3 items-center col-span-2 md:col-span-1">
             <Checkbox
+              className={"w-6 h-6"}
               checked={item.selected || false}
               onCheckedChange={() => toggleSelect(index)}
             />
             <span
-              className="cursor-pointer"
+              className="cursor-pointer text-wrap"
               onDoubleClick={() => {
-                const event = new CustomEvent("edit-product", { detail: index });
+                const event = new CustomEvent("edit-product", {
+                  detail: index,
+                });
                 window.dispatchEvent(event);
               }}
             >
               {item.description}
             </span>
           </div>
-          <div className="flex gap-3 col-span-2 md:col-span-1">
+          <div className="w-full justify-end flex gap-3 col-span-2 md:col-span-1">
             <ButtonGroup>
               <Button variant="outline" className="w-[100px]">
                 {item.price}
@@ -145,13 +187,14 @@ function ListProducts() {
 
 //#region DeleteListBtn
 export function DeleteListBtn() {
-  const { products, setProducts } = useContext(ProductsContext)
-  const [open, setOpen] = useState(false)
+  const { products, setProducts } = useContext(ProductsContext);
+  const [open, setOpen] = useState(false);
 
-  const hasSelected = products.some((p) => p.selected)
+  const hasSelected = products.some((p) => p.selected);
 
-  const handleDeleteSelected = () => setProducts(products.filter(p => !p.selected))
-  const handleDeleteAll = () => setProducts([])
+  const handleDeleteSelected = () =>
+    setProducts(products.filter((p) => !p.selected));
+  const handleDeleteAll = () => setProducts([]);
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
@@ -186,7 +229,7 @@ export function DeleteListBtn() {
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  )
+  );
 }
 
 //#endregion
@@ -217,7 +260,8 @@ function AddProducts() {
   const handleKeyPress = (e) => {
     const key = e.key;
     const targetId = e.target.id;
-    if (targetId === "description" && key === "Enter") document.getElementById("price")?.focus();
+    if (targetId === "description" && key === "Enter")
+      document.getElementById("price")?.focus();
     else if (targetId === "price" && key === "Enter") handleSubmit();
   };
 
@@ -249,14 +293,22 @@ function AddProducts() {
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild>
-        <Button>{editingIndex !== null ? "Modifica prodotto" : "Aggiungi prodotti"}</Button>
+        <Button>
+          {editingIndex !== null ? "Modifica prodotto" : "Aggiungi prodotti"}
+        </Button>
       </DrawerTrigger>
 
       <DrawerContent className="flex items-center justify-center">
         <div className="w-full max-w-md">
           <DrawerHeader>
-            <DrawerTitle>{editingIndex !== null ? "Modifica prodotto" : "Aggiungi prodotto"}</DrawerTitle>
-            <DrawerDescription>Inserisci le informazioni del prodotto</DrawerDescription>
+            <DrawerTitle>
+              {editingIndex !== null
+                ? "Modifica prodotto"
+                : "Aggiungi prodotto"}
+            </DrawerTitle>
+            <DrawerDescription>
+              Inserisci le informazioni del prodotto
+            </DrawerDescription>
           </DrawerHeader>
 
           <div className="flex flex-col gap-3 p-4">
@@ -294,7 +346,9 @@ function AddProducts() {
           </div>
 
           <DrawerFooter>
-            <Button onClick={handleSubmit}>{editingIndex !== null ? "Modifica" : "Aggiungi"}</Button>
+            <Button onClick={handleSubmit}>
+              {editingIndex !== null ? "Modifica" : "Aggiungi"}
+            </Button>
             <DrawerClose asChild>
               <Button variant="outline" className="w-full">
                 Cancel
