@@ -1,6 +1,7 @@
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 import { ToasterClient } from "@/components/toaster-client";
+import { ProductsProvider } from "@/components/products-context";
 
 export const metadata = {
   title: "ShopperHelper",
@@ -9,7 +10,6 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`antialiased`}>
@@ -19,7 +19,7 @@ export default function RootLayout({ children }) {
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <ProductsProvider>{children}</ProductsProvider>
           <ToasterClient />
         </ThemeProvider>
       </body>

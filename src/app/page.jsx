@@ -35,6 +35,7 @@ import {
   ProductsProvider,
 } from "@/components/products-context";
 import { ModeToggle } from "@/components/mode-toggle";
+import ProductSuggestions from "@/components/product-suggestions";
 //#endregion
 
 //#region Navbar
@@ -60,12 +61,10 @@ function Navbar() {
 
 export default function Home() {
   return (
-    <ProductsProvider>
-      <div className="w-screen h-screen flex flex-col gap-6 items-center">
-        <Navbar />
-        <ProductContainer />
-      </div>
-    </ProductsProvider>
+    <div className="w-screen h-screen flex flex-col gap-6 items-center">
+      <Navbar />
+      <ProductContainer />
+    </div>
   );
 }
 
@@ -104,7 +103,10 @@ function ProductContainer() {
     <div className="w-full max-w-xl flex-1 flex flex-col px-3">
       <div className="w-full flex justify-between pb-5">
         <AddProducts />
-        <DeleteListBtn />
+        <div className="flex gap-3">
+          {settings.mealVoucherEnabled && <ProductSuggestions remaining={remaining} />}
+          <DeleteListBtn />
+        </div>
       </div>
 
       {/* Totale spesa */}
@@ -131,6 +133,7 @@ function NoProducts() {
     </div>
   );
 }
+
 //#endregion
 
 //#region ListProducts
@@ -143,9 +146,9 @@ function ListProducts() {
     setProducts(updated);
   };
 
-  const changeQuantity = (index, newQuantity) => {
+  const updateItem = (index, property, value) => {
     const updated = [...products];
-    updated[index].quantity = newQuantity;
+    updated[index][property] = value;
     setProducts(updated);
   };
 
@@ -173,16 +176,19 @@ function ListProducts() {
           </div>
           <div className="w-full justify-end flex gap-3 col-span-2 md:col-span-1">
             <ButtonGroup>
-              <Button variant="outline" className="w-[100px]">
-                {item.price}
-              </Button>
+              <Input
+                type="tel"
+                inputMode="decimal"
+                value={item.price}
+                onChange={(e) => updateItem(index, "price", e.target.value)}
+              />
               <Button variant="outline">
                 <EuroIcon />
               </Button>
             </ButtonGroup>
             <QuantityButton
               quantity={item.quantity}
-              setQuantity={(q) => changeQuantity(index, q)}
+              setQuantity={(q) => updateItem(index, "quantity", q)}
             />
           </div>
         </div>
@@ -232,7 +238,7 @@ export function DeleteListBtn() {
             </AlertDialogAction>
           )}
           <AlertDialogAction onClick={handleDeleteAll}>Tutti</AlertDialogAction>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel>Annulla</AlertDialogCancel>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
@@ -358,7 +364,7 @@ function AddProducts() {
             </Button>
             <DrawerClose asChild>
               <Button variant="outline" className="w-full">
-                Cancel
+                Annulla
               </Button>
             </DrawerClose>
           </DrawerFooter>

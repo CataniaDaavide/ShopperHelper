@@ -14,19 +14,28 @@ export default function SettingsPage() {
     mealVoucherEnabled: false,
     mealVoucherValue: 0,
   });
+  const [loaded, setLoaded] = useState(false);
 
   // Recupera le impostazioni dal localStorage all'apertura
   useEffect(() => {
     const stored = localStorage.getItem("settings");
     if (stored) {
-      setSettings(JSON.parse(stored));
+      try {
+        setSettings(JSON.parse(stored));
+      } catch (e) {
+        console.error("Errore parsing settings", e);
+      }
     }
+    setLoaded(true);
   }, []);
 
   // Aggiorna localStorage quando cambiano le impostazioni
   useEffect(() => {
-    localStorage.setItem("settings", JSON.stringify(settings));
-  }, [settings]);
+    if (loaded) {
+      console.log("Salvo settings:", settings);
+      localStorage.setItem("settings", JSON.stringify(settings));
+    }
+  }, [settings, loaded]);
 
   const toggleMealVoucher = () => {
     setSettings((prev) => ({
