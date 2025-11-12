@@ -72,7 +72,8 @@ const exampleProducts = [
 
 
 export const ProductsProvider = ({ children }) => {
-  const [products, setProducts] = useState(exampleProducts);
+  // const [products, setProducts] = useState(exampleProducts);
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
     const stored = localStorage.getItem("products");

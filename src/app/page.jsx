@@ -280,10 +280,10 @@ function AddProducts() {
 
   const handleSubmit = () => {
     if (!description || !price) return;
-
+    
     const newProduct = {
       description,
-      price: parseFloat(price),
+      price: parseFloat(price.replace(",",".")),
       quantity: parseInt(quantity),
       selected: false, // inizialmente non selezionato
     };
