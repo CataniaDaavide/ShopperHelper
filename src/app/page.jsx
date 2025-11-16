@@ -104,17 +104,21 @@ function ProductContainer() {
       <div className="w-full flex justify-between pb-5">
         <AddProducts />
         <div className="flex gap-3">
-          {settings.mealVoucherEnabled && <ProductSuggestions remaining={remaining} />}
+          {settings.mealVoucherEnabled && (
+            <ProductSuggestions remaining={remaining} />
+          )}
           <DeleteListBtn />
         </div>
       </div>
 
       {/* Totale spesa */}
       <div className="w-full flex gap-3 items-center justify-end mb-3">
-        <p className="font-bold text-lg">Totale: €{total.toFixed(2)}</p>
+        <p className="font-bold text-lg">
+          Totale: €{total.toFixed(2).replace(".", ",")}
+        </p>
         {settings.mealVoucherEnabled && remaining > 0 && (
           <p className="text-orange-500 font-semibold">
-            €{remaining.toFixed(2)}
+            €{remaining.toFixed(2).replace(".", ",")}
           </p>
         )}
       </div>
@@ -156,14 +160,16 @@ function ListProducts() {
     <div className="flex-1 overflow-y-auto flex flex-col gap-6">
       {products.map((item, index) => (
         <div key={index} className="w-full grid grid-cols-2 gap-3">
-          <div className="flex gap-3 items-center col-span-2 md:col-span-1">
+          <div className="flex gap-3 items-center">
             <Checkbox
               className={"w-6 h-6"}
               checked={item.selected || false}
               onCheckedChange={() => toggleSelect(index)}
             />
             <span
-              className="cursor-pointer text-wrap"
+              className={`cursor-pointer text-wrap ${
+                item.selected && "line-through"
+              }`}
               onDoubleClick={() => {
                 const event = new CustomEvent("edit-product", {
                   detail: index,
@@ -174,18 +180,8 @@ function ListProducts() {
               {item.description}
             </span>
           </div>
-          <div className="w-full justify-end flex gap-3 col-span-2 md:col-span-1">
-            <ButtonGroup>
-              <Input
-                type="tel"
-                inputMode="decimal"
-                value={item.price}
-                onChange={(e) => updateItem(index, "price", e.target.value)}
-              />
-              <Button variant="outline">
-                <EuroIcon />
-              </Button>
-            </ButtonGroup>
+          <div className="w-full justify-end flex items-center gap-3">
+            <p>€{(item.quantity * item.price).toFixed(2).replace(".", ",")}</p>
             <QuantityButton
               quantity={item.quantity}
               setQuantity={(q) => updateItem(index, "quantity", q)}
@@ -280,10 +276,10 @@ function AddProducts() {
 
   const handleSubmit = () => {
     if (!description || !price) return;
-    
+
     const newProduct = {
       description,
-      price: parseFloat(price.replace(",",".")),
+      price: parseFloat(price.replace(",", ".")),
       quantity: parseInt(quantity),
       selected: false, // inizialmente non selezionato
     };
