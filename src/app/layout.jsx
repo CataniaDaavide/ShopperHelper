@@ -11,8 +11,8 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`antialiased`}>
+    <html lang="en" className="w-full h-full" suppressHydrationWarning>
+      <body className={`w-full h-full antialiased`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
