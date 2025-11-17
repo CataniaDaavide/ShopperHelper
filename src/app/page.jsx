@@ -122,7 +122,7 @@ function ProductContainer() {
           </p>
         )}
       </div>
-
+        
       {products.length === 0 ? <NoProducts /> : <ListProducts />}
     </div>
   );
@@ -157,7 +157,7 @@ function ListProducts() {
   };
 
   return (
-    <div className="flex-1 overflow-y-auto flex flex-col gap-6">
+    <div className="flex-1 max-h-[500px] md:max-h-[600px] overflow-y-auto flex flex-col gap-6">
       {products.map((item, index) => (
         <div key={index} className="w-full grid grid-cols-2 gap-3">
           <div className="flex gap-3 items-center">

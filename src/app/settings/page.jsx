@@ -9,14 +9,34 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { ModeToggle } from "@/components/mode-toggle";
 
+const settingsData = [
+  {
+    name: "mealVoucher",
+    title: "Buoni pasto",
+    description: "Attiva/disattiva l'uso dei buoni pasto",
+    inputInfo: {
+      id: "mealVoucherValue",
+      field: "Valore buono pasto (€)",
+      type: "tel",
+      placeholder: "Inserisci il valore",
+    },
+    default: {
+      mealVoucherEnabled: false,
+      mealVoucherValue: 0,
+    },
+  },
+];
+
 export default function SettingsPage() {
-  const [settings, setSettings] = useState({
-    mealVoucherEnabled: false,
-    mealVoucherValue: 0,
-  });
+  const defaultSettings = settingsData.reduce(
+    (acc, item) => ({ ...acc, ...item.default }),
+    {}
+  );
+
+  const [settings, setSettings] = useState(defaultSettings);
   const [loaded, setLoaded] = useState(false);
 
-  // Recupera le impostazioni dal localStorage all'apertura
+  // Recupera dal localStorage
   useEffect(() => {
     const stored = localStorage.getItem("settings");
     if (stored) {
@@ -29,86 +49,116 @@ export default function SettingsPage() {
     setLoaded(true);
   }, []);
 
-  // Aggiorna localStorage quando cambiano le impostazioni
+  // Salva nel localStorage
   useEffect(() => {
     if (loaded) {
-      console.log("Salvo settings:", settings);
       localStorage.setItem("settings", JSON.stringify(settings));
     }
   }, [settings, loaded]);
 
-  const toggleMealVoucher = () => {
+  return (
+    <div className="w-screen h-screen flex flex-col overflow-hidden">
+      <HeaderSettings />
+
+      <div className="mx-auto w-full h-full max-w-xl p-4 flex flex-col justify-between gap-6">
+        <Settings settings={settings} setSettings={setSettings} />
+        <SettingsSaveBtn settings={settings} />
+      </div>
+    </div>
+  );
+}
+
+function HeaderSettings() {
+  return (
+    <div className="p-3 flex justify-between gap-3 border-b">
+      <div className="flex items-center gap-3">
+        <Link href={"/"}>
+          <ChevronLeft className="w-5 h-5" />
+        </Link>
+        <p className="font-bold text-lg">Impostazioni</p>
+      </div>
+
+      <ModeToggle />
+    </div>
+  );
+}
+
+function Settings({ settings, setSettings }) {
+  return (
+    <div className="w-full flex-1 flex-col overflow-y-auto gap-3 flex">
+      {settingsData.map((item, index) => (
+        <SettingItem
+          key={index}
+          data={item}
+          settings={settings}
+          setSettings={setSettings}
+        />
+      ))}
+    </div>
+  );
+}
+
+function SettingItem({ data, settings, setSettings }) {
+  const { name, title, description, inputInfo } = data;
+  const { id, field, type, placeholder } = inputInfo;
+
+  const enabledKey = `${name}Enabled`;
+  const valueKey = `${name}Value`;
+
+  const toggleChecked = () => {
     setSettings((prev) => ({
       ...prev,
-      mealVoucherEnabled: !prev.mealVoucherEnabled,
+      [enabledKey]: !prev[enabledKey],
     }));
   };
 
-  const handleMealVoucherValueChange = (e) => {
-    const value = parseFloat(e.target.value);
+  const handleValueChange = (e) => {
+    const num = parseFloat(e.target.value);
     setSettings((prev) => ({
       ...prev,
-      mealVoucherValue: isNaN(value) ? 0 : value,
+      [valueKey]: isNaN(num) ? 0 : num,
     }));
   };
 
   return (
-    <div className="w-screen h-screen flex flex-col">
-      {/* Header */}
-      <div className="p-3 flex justify-between gap-3 border-b">
-        <div className="flex items-center gap-3">
-          <Link href={"/"}>
-            <ChevronLeft className="w-5 h-5" />
-          </Link>
-          <p className="font-bold text-lg">Impostazioni</p>
+    <div className="w-full flex flex-col gap-3">
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="font-medium">{title}</p>
+          <p className="text-sm text-gray-500">{description}</p>
         </div>
 
-        <ModeToggle />
+        <Switch checked={settings[enabledKey]} onCheckedChange={toggleChecked} />
       </div>
 
-      {/* Content */}
-      <div className="mx-auto w-full max-w-xl p-4 flex flex-col gap-6">
-        {/* Buoni pasto */}
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="font-medium">Buoni pasto</p>
-            <p className="text-sm text-gray-500">
-              Attiva/disattiva l'uso dei buoni pasto
-            </p>
-          </div>
-          <Switch
-            checked={settings.mealVoucherEnabled}
-            onCheckedChange={toggleMealVoucher}
+      {settings[enabledKey] && (
+        <div className="flex flex-col gap-1">
+          <label className="font-medium" htmlFor={id}>
+            {field}
+          </label>
+          <Input
+            id={id}
+            type={type}
+            inputMode="decimal"
+            value={settings[valueKey]}
+            onChange={handleValueChange}
+            placeholder={placeholder}
           />
         </div>
-
-        {/* Valore buono pasto */}
-        {settings.mealVoucherEnabled && (
-          <div className="flex flex-col gap-1">
-            <label className="font-medium" htmlFor="mealVoucherValue">
-              Valore buono pasto (€)
-            </label>
-            <Input
-              id="mealVoucherValue"
-              type="tel"
-              inputMode="decimal"
-              value={settings.mealVoucherValue}
-              onChange={handleMealVoucherValueChange}
-              placeholder="Inserisci il valore"
-            />
-          </div>
-        )}
-
-        {/* Bottone Salva */}
-        <Button
-          onClick={() => {
-            localStorage.setItem("settings", JSON.stringify(settings));
-            toast.success("Modifica effettuata con successo");
-          }}
-        >
-          Salva impostazioni
-        </Button>
-      </div>
+      )}
     </div>
+  );
+}
+
+function SettingsSaveBtn({ settings }) {
+  return (
+    <Button
+      onClick={() => {
+        localStorage.setItem("settings", JSON.stringify(settings));
+        toast.success("Modifica effettuata con successo");
+      }}
+    >
+      Salva impostazioni
+    </Button>
   );
 }

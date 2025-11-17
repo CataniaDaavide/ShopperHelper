@@ -33,7 +33,6 @@ export default function ProductSuggestions({ remaining }) {
         <Button
           size="icon"
           variant="outline"
-          className="border-amber-500 text-amber-500"
         >
           <Lightbulb className="text-white" />
         </Button>
