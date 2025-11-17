@@ -181,7 +181,7 @@ function ListProducts() {
             </span>
           </div>
           <div className="w-full justify-end flex items-center gap-3">
-            <p>€{(item.quantity * item.price).toFixed(2).replace(".", ",")}</p>
+            <p>€{item.price.toFixed(2).replace(".", ",")}</p>
             <QuantityButton
               quantity={item.quantity}
               setQuantity={(q) => updateItem(index, "quantity", q)}
