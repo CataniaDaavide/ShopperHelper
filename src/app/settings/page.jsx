@@ -9,7 +9,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { ModeToggle } from "@/components/mode-toggle";
 
-const settingsData = [
+export const settingsData = [
   {
     name: "mealVoucher",
     title: "Buoni pasto",
