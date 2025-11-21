@@ -1,7 +1,5 @@
 "use client";
-
 //#region components
-import { settingsData } from "../settings/page";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { Input } from "@/components/ui/input";
@@ -40,30 +38,14 @@ import { ModeToggle } from "@/components/mode-toggle";
 import ProductSuggestions from "@/components/product-suggestions";
 //#endregion
 
-function fixDecimal(d) {
-  return d.toFixed(2).replace(".", ",");
-}
-
-export default function HomePage() {
-  return (
-    <div className="w-full h-full flex flex-col gap-6">
-      <Header />
-      <ProductContainer />
-    </div>
-  );
-}
-
-//#region Header
-function Header() {
+//#region Navbar
+function Navbar() {
   return (
     <div className="p-3 w-full flex items-center justify-between gap-3 border-b">
-      {/* logo */}
       <div className="flex gap-3">
         <ShoppingBag />
         <p className="font-bold text-lg">Shopper Helper</p>
       </div>
-
-      {/* action */}
       <div className="flex gap-3">
         <ModeToggle />
         <Link href={"/settings"}>
@@ -77,15 +59,23 @@ function Header() {
 }
 //#endregion
 
+export default function Home() {
+  return (
+    <div className="w-screen h-screen flex flex-col gap-6 items-center">
+      <Navbar />
+      <ProductContainer />
+    </div>
+  );
+}
+
 //#region ProductContainer
 function ProductContainer() {
   const { products } = useContext(ProductsContext);
 
-  const defaultSettings = settingsData.reduce(
-    (acc, item) => ({ ...acc, ...item.default }),
-    {}
-  );
-  const [settings, setSettings] = useState(defaultSettings);
+  const [settings, setSettings] = useState({
+    mealVoucherEnabled: false,
+    mealVoucherValue: 0,
+  });
 
   // Recupera settings dal localStorage
   useEffect(() => {
@@ -110,46 +100,48 @@ function ProductContainer() {
   }
 
   return (
-    <div className="w-full h-full overflow-y-auto flex flex-col px-3 gap-6">
-      <ProductsActions
-        settings={settings}
-        remaining={remaining}
-        total={total}
-      />
-      <ProductListItems products={products} />
-      {/* {products.length === 0 ? <NoProducts /> : <ListProducts />} */}
-    </div>
-  );
-}
-
-function ProductsActions({ settings, remaining, total }) {
-  return (
-    <div className="w-full flex flex-col gap-3">
-      {/* action */}
-      <div className="w-full flex items-center justify-between">
+    <div className="w-full max-w-xl flex-1 flex flex-col px-3">
+      <div className="w-full flex justify-between pb-5">
         <AddProducts />
-        <div className="flex items-center gap-3">
-          {settings?.mealVoucherEnabled && (
+        <div className="flex gap-3">
+          {settings.mealVoucherEnabled && (
             <ProductSuggestions remaining={remaining} />
           )}
           <DeleteListBtn />
         </div>
       </div>
 
-      {/* total */}
-      <div className="w-full flex items-center justify-end gap-3">
-        <p className="font-bold text-lg">Totale: €{fixDecimal(total)}</p>
-        {settings?.mealVoucherEnabled && remaining > 0 && (
+      {/* Totale spesa */}
+      <div className="w-full flex gap-3 items-center justify-end mb-3">
+        <p className="font-bold text-lg">
+          Totale: €{total.toFixed(2).replace(".", ",")}
+        </p>
+        {settings.mealVoucherEnabled && remaining > 0 && (
           <p className="text-orange-500 font-semibold">
-            €{fixDecimal(remaining)}
+            €{remaining.toFixed(2).replace(".", ",")}
           </p>
         )}
       </div>
+        
+      {products.length === 0 ? <NoProducts /> : <ListProducts />}
     </div>
   );
 }
 
-function ProductListItems() {
+function NoProducts() {
+  return (
+    <div className="w-full text-center">
+      <p className="text-gray-500">
+        Usa il pulsante "Aggiungi prodotto" per inserire prodotti nella lista
+      </p>
+    </div>
+  );
+}
+
+//#endregion
+
+//#region ListProducts
+function ListProducts() {
   const { products, setProducts } = useContext(ProductsContext);
 
   const toggleSelect = (index) => {
@@ -165,69 +157,38 @@ function ProductListItems() {
   };
 
   return (
-    <div className="w-full flex-1 overflow-y-auto flex flex-col px-3 gap-6">
-      {products.length === 0 ? (
-        <NoProducts />
-      ) : (
-        products.map((item, index) => {
-          return (
-            <ProductItem
-              key={index}
-              item={item}
-              index={index}
-              updateItem={updateItem}
-              toggleSelect={toggleSelect }
+    <div className="flex-1 max-h-[500px] md:max-h-[600px] overflow-y-auto flex flex-col gap-6">
+      {products.map((item, index) => (
+        <div key={index} className="w-full grid grid-cols-2 gap-3">
+          <div className="flex gap-3 items-center">
+            <Checkbox
+              className={"w-6 h-6"}
+              checked={item.selected || false}
+              onCheckedChange={() => toggleSelect(index)}
             />
-          );
-        })
-      )}
-
-      {/* questo div evita chè l'ultimo item sia attaccato al bordo del dispositivo */}
-      {products.length != 0 && <div className="w-full min-h-20"></div>}
-    </div>
-  );
-}
-
-function ProductItem({ item, index, updateItem, toggleSelect }) {
-  return (
-    <div className="w-full grid grid-cols-2 gap-3">
-      <div className="flex gap-3 items-center">
-        <Checkbox
-          className={"w-6 h-6"}
-          checked={item.selected || false}
-          onCheckedChange={() => toggleSelect(index)}
-        />
-        <span
-          className={`cursor-pointer text-wrap ${
-            item.selected && "line-through"
-          }`}
-          onDoubleClick={() => {
-            const event = new CustomEvent("edit-product", {
-              detail: index,
-            });
-            window.dispatchEvent(event);
-          }}
-        >
-          {item.description}
-        </span>
-      </div>
-      <div className="w-full justify-end flex items-center gap-3">
-        <p>€{item.price.toFixed(2).replace(".", ",")}</p>
-        <QuantityButton
-          quantity={item.quantity}
-          setQuantity={(q) => updateItem(index, "quantity", q)}
-        />
-      </div>
-    </div>
-  );
-}
-
-function NoProducts() {
-  return (
-    <div className="w-full text-center">
-      <p className="text-gray-500">
-        Usa il pulsante "Aggiungi prodotto" per inserire prodotti nella lista
-      </p>
+            <span
+              className={`cursor-pointer text-wrap ${
+                item.selected && "line-through"
+              }`}
+              onDoubleClick={() => {
+                const event = new CustomEvent("edit-product", {
+                  detail: index,
+                });
+                window.dispatchEvent(event);
+              }}
+            >
+              {item.description}
+            </span>
+          </div>
+          <div className="w-full justify-end flex items-center gap-3">
+            <p>€{item.price.toFixed(2).replace(".", ",")}</p>
+            <QuantityButton
+              quantity={item.quantity}
+              setQuantity={(q) => updateItem(index, "quantity", q)}
+            />
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
