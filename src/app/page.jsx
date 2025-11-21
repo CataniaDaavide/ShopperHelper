@@ -212,7 +212,7 @@ function ProductItem({ item, index, updateItem, toggleSelect }) {
         </span>
       </div>
       <div className="w-full justify-end flex items-center gap-3">
-        <p>€{item.price.toFixed(2).replace(".", ",")}</p>
+        <p>€{fixDecimal(item.price)}</p>
         <QuantityButton
           quantity={item.quantity}
           setQuantity={(q) => updateItem(index, "quantity", q)}
@@ -296,7 +296,7 @@ function AddProducts() {
       const index = e.detail;
       const product = products[index];
       setDescription(product.description);
-      setPrice(product.price.toString());
+      setPrice(fixDecimal(product.price));
       setQuantity(product.quantity);
       setEditingIndex(index);
       setIsOpen(true);
