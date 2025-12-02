@@ -44,6 +44,14 @@ function fixDecimal(d) {
   return d.toFixed(2).replace(".", ",");
 }
 
+function stringToFloat(str) {
+  return parseFloat(str.replace(",", "."));
+}
+
+function floatToString(num) {
+  return num.toFixed(2).replace(".", ",");
+}
+
 export default function HomePage() {
   return (
     <div className="w-full h-full flex flex-col gap-6">
@@ -176,7 +184,7 @@ function ProductListItems() {
               item={item}
               index={index}
               updateItem={updateItem}
-              toggleSelect={toggleSelect }
+              toggleSelect={toggleSelect}
             />
           );
         })
@@ -296,7 +304,7 @@ function AddProducts() {
       const index = e.detail;
       const product = products[index];
       setDescription(product.description);
-      setPrice(fixDecimal(product.price));
+      setPrice(product.price === 0 ? "0" : fixDecimal(product.price));
       setQuantity(product.quantity);
       setEditingIndex(index);
       setIsOpen(true);
@@ -311,6 +319,56 @@ function AddProducts() {
     if (targetId === "description" && key === "Enter")
       document.getElementById("price")?.focus();
     else if (targetId === "price" && key === "Enter") handleSubmit();
+  };
+
+  const handleFocus = (e) => {
+    try {
+      var value = e.target.value;
+      value = value.replace(",", ".");
+      if (parseFloat(value) === 0) {
+        setPrice("");
+      }
+    } catch (error) {}
+  };
+
+  const handleBlur = (e) => {
+    try {
+      var value = e.target.value;
+      if (value === "") {
+        setPrice(0);
+        return;
+      }
+
+      value = value.replace(".", ",");
+
+      const [integerPart, decimalPart] = value.split(",");
+      //se dopo la virgola non vengono inseriti numeri, prende solo la parte intera
+      if (decimalPart.length === 0) {
+        setPrice(integerPart);
+      }
+    } catch (error) {}
+  };
+
+  const handleChange = (e) => {
+    try {
+      var value = e.target.value;
+
+      if (value === "") {
+        setPrice(value);
+        return;
+      }
+
+      value = value.replace(".", ",");
+
+      //se si inseriscono valori non permessi esce
+      if (/^[0-9.,]+$/.test(value) === false) return;
+
+      const [integerPart, decimalPart] = value.split(",");
+      //se i decimali sono più di due esce
+      if (decimalPart && decimalPart.length > 2) return;
+
+      setPrice(value);
+    } catch (error) {}
   };
 
   const handleSubmit = () => {
@@ -378,11 +436,13 @@ function AddProducts() {
                   <Input
                     id="price"
                     value={price}
-                    onChange={(e) => setPrice(e.target.value)}
+                    onFocus={handleFocus}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    onKeyPress={handleKeyPress}
                     type="tel"
                     inputMode="decimal"
                     placeholder="Inserisci prezzo"
-                    onKeyPress={handleKeyPress}
                   />
                   <Button variant="outline">
                     <EuroIcon />
