@@ -198,8 +198,8 @@ function ProductListItems() {
 
 function ProductItem({ item, index, updateItem, toggleSelect }) {
   return (
-    <div className="w-full grid grid-cols-2 gap-3">
-      <div className="flex gap-3 items-center">
+    <div className="w-full grid grid-cols-3 gap-3">
+      <div className="col-span-2 flex gap-3 items-center">
         <Checkbox
           className={"w-6 h-6"}
           checked={item.selected || false}
@@ -219,7 +219,7 @@ function ProductItem({ item, index, updateItem, toggleSelect }) {
           {item.description}
         </span>
       </div>
-      <div className="w-full justify-end flex items-center gap-3">
+      <div className="w-full flex-col justify-end flex items-center gap-1">
         <p>€{fixDecimal(item.price)}</p>
         <QuantityButton
           quantity={item.quantity}
@@ -431,7 +431,7 @@ function AddProducts() {
 
             <div className="flex flex-col gap-1">
               <span>Prezzo</span>
-              <div className="flex gap-6">
+              <div className="flex justify-between gap-6">
                 <ButtonGroup>
                   <Input
                     id="price"
@@ -443,6 +443,7 @@ function AddProducts() {
                     type="tel"
                     inputMode="decimal"
                     placeholder="Inserisci prezzo"
+                    className={"max-w-[150px]"}
                   />
                   <Button variant="outline">
                     <EuroIcon />

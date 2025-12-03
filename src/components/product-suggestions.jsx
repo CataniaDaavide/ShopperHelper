@@ -30,11 +30,8 @@ export default function ProductSuggestions({ remaining }) {
   return (
     <Drawer>
       <DrawerTrigger asChild>
-        <Button
-          size="icon"
-          variant="outline"
-        >
-          <Lightbulb className="text-white" />
+        <Button size="icon" variant="outline">
+          <Lightbulb />
         </Button>
       </DrawerTrigger>
 
@@ -61,7 +58,7 @@ export default function ProductSuggestions({ remaining }) {
                     <li key={i} className="flex justify-between">
                       <div className="flex">
                         <Dot />
-                        <span>{p.description}</span>
+                        <span className="break-all">{p.description}</span>
                       </div>
                       <span className="font-medium">€{p.price.toFixed(2)}</span>
                     </li>
