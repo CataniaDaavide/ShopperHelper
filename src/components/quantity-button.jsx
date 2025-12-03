@@ -31,7 +31,7 @@ export default function QuantityButton({ quantity, setQuantity }) {
       <Button disabled={disableMinus} variant="outline" onClick={minus}>
         <Minus />
       </Button>
-      <Button variant={"outline"} size={"icon"} className={"border-none shadow-none bg-transparent hover:bg-transparent"}>
+      <Button variant={"outline"} size={"icon"} className={"border-none shadow-none bg-transparent! hover:bg-transparent!"}>
         {quantity}
       </Button>
       <Button variant="outline" onClick={add}>
