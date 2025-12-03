@@ -397,7 +397,20 @@ function AddProducts() {
   };
 
   return (
-    <Drawer open={isOpen} onOpenChange={setIsOpen}>
+    <Drawer
+      open={isOpen}
+      onOpenChange={(open) => {
+        setIsOpen(open);
+
+        if (!open) {
+          // RESET dei campi quando il drawer si chiude
+          setDescription("");
+          setPrice("0");
+          setQuantity(1);
+          setEditingIndex(null);
+        }
+      }}
+    >
       <DrawerTrigger asChild>
         <Button>
           {editingIndex !== null ? "Modifica prodotto" : "Aggiungi prodotti"}
