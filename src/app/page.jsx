@@ -206,7 +206,7 @@ function ProductItem({ item, index, updateItem, toggleSelect }) {
           onCheckedChange={() => toggleSelect(index)}
         />
         <span
-          className={`cursor-pointer text-wrap ${
+          className={`cursor-pointer break-all ${
             item.selected && "line-through"
           }`}
           onDoubleClick={() => {
