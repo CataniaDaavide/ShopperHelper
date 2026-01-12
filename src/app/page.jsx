@@ -179,13 +179,16 @@ function ProductListItems() {
       ) : (
         products.map((item, index) => {
           return (
-            <ProductItem
-              key={index}
-              item={item}
-              index={index}
-              updateItem={updateItem}
-              toggleSelect={toggleSelect}
-            />
+            <div className="w-full flex flex-col gap-3">
+              <ProductItem
+                key={index}
+                item={item}
+                index={index}
+                updateItem={updateItem}
+                toggleSelect={toggleSelect}
+              />
+              <div className="w-full h-px border-b"></div>
+            </div>
           );
         })
       )}
@@ -198,7 +201,7 @@ function ProductListItems() {
 
 function ProductItem({ item, index, updateItem, toggleSelect }) {
   return (
-    <div className="w-full grid grid-cols-5 gap-3">
+    <div className="w-full grid grid-cols-5 gap-3 ">
       <div className="col-span-3 flex gap-3 items-center">
         <Checkbox
           className={"w-6 h-6"}
