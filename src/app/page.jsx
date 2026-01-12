@@ -219,7 +219,7 @@ function ProductItem({ item, index, updateItem, toggleSelect }) {
           {item.description}
         </span>
       </div>
-      <div className="col-span-2 w-full justify-end flex items-center gap-3">
+      <div className="col-span-2 w-full justify-center items-end flex flex-col items-center gap-1">
         <p>€{fixDecimal(item.price)}</p>
         <QuantityButton
           quantity={item.quantity}
