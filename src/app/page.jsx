@@ -173,15 +173,14 @@ function ProductListItems() {
   };
 
   return (
-    <div className="w-full flex-1 overflow-y-auto flex flex-col px-3 gap-6">
+    <div className="w-full flex-1 overflow-y-auto flex flex-col px-3 gap-3">
       {products.length === 0 ? (
         <NoProducts />
       ) : (
         products.map((item, index) => {
           return (
-            <div className="w-full flex flex-col gap-3">
+            <div className="w-full flex flex-col gap-3" key={index}>
               <ProductItem
-                key={index}
                 item={item}
                 index={index}
                 updateItem={updateItem}
@@ -201,8 +200,8 @@ function ProductListItems() {
 
 function ProductItem({ item, index, updateItem, toggleSelect }) {
   return (
-    <div className="w-full grid grid-cols-5 gap-3 ">
-      <div className="col-span-3 flex gap-3 items-center">
+    <div className="w-full grid grid-cols-5 gap-3">
+      <div className="col-span-3 flex gap-3">
         <Checkbox
           className={"w-6 h-6"}
           checked={item.selected || false}
