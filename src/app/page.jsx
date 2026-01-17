@@ -91,7 +91,7 @@ function ProductContainer() {
 
   const defaultSettings = settingsData.reduce(
     (acc, item) => ({ ...acc, ...item.default }),
-    {}
+    {},
   );
   const [settings, setSettings] = useState(defaultSettings);
 
@@ -199,6 +199,13 @@ function ProductListItems() {
 }
 
 function ProductItem({ item, index, updateItem, toggleSelect }) {
+  const handleDoubleClick = () => {
+    const event = new CustomEvent("edit-product", {
+      detail: index,
+    });
+    window.dispatchEvent(event);
+  };
+
   return (
     <div className="w-full grid grid-cols-5 gap-3">
       <div className="col-span-3 flex gap-3">
@@ -211,12 +218,7 @@ function ProductItem({ item, index, updateItem, toggleSelect }) {
           className={`cursor-pointer break-all ${
             item.selected && "line-through"
           }`}
-          onDoubleClick={() => {
-            const event = new CustomEvent("edit-product", {
-              detail: index,
-            });
-            window.dispatchEvent(event);
-          }}
+          onDoubleClick={handleDoubleClick}
         >
           {item.description}
         </span>
@@ -344,7 +346,6 @@ function AddProducts() {
       value = value.replace(".", ",");
 
       const [integerPart, decimalPart] = value.split(",");
-      //se dopo la virgola non vengono inseriti numeri, prende solo la parte intera
       if (decimalPart.length === 0) {
         setPrice(integerPart);
       }
@@ -362,15 +363,25 @@ function AddProducts() {
 
       value = value.replace(".", ",");
 
-      //se si inseriscono valori non permessi esce
       if (/^[0-9.,]+$/.test(value) === false) return;
 
       const [integerPart, decimalPart] = value.split(",");
-      //se i decimali sono più di due esce
       if (decimalPart && decimalPart.length > 2) return;
 
       setPrice(value);
     } catch (error) {}
+  };
+
+  const handleDelete = () => {
+    if (editingIndex === null) return;
+    const updated = products.filter((_, i) => i !== editingIndex);
+    setProducts(updated);
+    localStorage.setItem("products", JSON.stringify(updated));
+    setIsOpen(false);
+    setEditingIndex(null);
+    setDescription("");
+    setPrice("0");
+    setQuantity(1);
   };
 
   const handleSubmit = () => {
@@ -380,16 +391,19 @@ function AddProducts() {
       description,
       price: parseFloat(price.replace(",", ".")),
       quantity: parseInt(quantity),
-      selected: false, // inizialmente non selezionato
+      selected: false,
     };
 
+    let updatedProducts;
     if (editingIndex !== null) {
-      const updatedProducts = [...products];
+      updatedProducts = [...products];
       updatedProducts[editingIndex] = newProduct;
-      setProducts(updatedProducts);
     } else {
-      setProducts((prev) => [...prev, newProduct]);
+      updatedProducts = [...products, newProduct];
     }
+
+    setProducts(updatedProducts);
+    localStorage.setItem("products", JSON.stringify(updatedProducts));
 
     setDescription("");
     setPrice("0");
@@ -403,9 +417,7 @@ function AddProducts() {
       open={isOpen}
       onOpenChange={(open) => {
         setIsOpen(open);
-
         if (!open) {
-          // RESET dei campi quando il drawer si chiude
           setDescription("");
           setPrice("0");
           setQuantity(1);
@@ -435,18 +447,29 @@ function AddProducts() {
           <div className="flex flex-col gap-3 p-4">
             <div className="flex flex-col gap-1">
               <span>Descrizione</span>
-              <Input
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Inserisci descrizione"
-                onKeyPress={handleKeyPress}
-              />
+              <div className="flex justify-between gap-3 items-center">
+                <Input
+                  id="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Inserisci descrizione"
+                  onKeyPress={handleKeyPress}
+                />
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="hover:text-red-500"
+                  onClick={handleDelete}
+                  disabled={editingIndex === null}
+                >
+                  <Trash />
+                </Button>
+              </div>
             </div>
 
             <div className="flex flex-col gap-1">
               <span>Prezzo</span>
-              <div className="flex justify-between gap-6">
+              <div className="flex justify-between gap-6 items-end">
                 <ButtonGroup>
                   <Input
                     id="price"
@@ -458,7 +481,7 @@ function AddProducts() {
                     type="tel"
                     inputMode="decimal"
                     placeholder="Inserisci prezzo"
-                    className={"max-w-[150px]"}
+                    className="max-w-[150px]"
                   />
                   <Button variant="outline">
                     <EuroIcon />
