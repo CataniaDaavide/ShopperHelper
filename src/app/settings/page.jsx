@@ -30,7 +30,7 @@ export const settingsData = [
 export default function SettingsPage() {
   const defaultSettings = settingsData.reduce(
     (acc, item) => ({ ...acc, ...item.default }),
-    {}
+    {},
   );
 
   const [settings, setSettings] = useState(defaultSettings);
@@ -128,7 +128,10 @@ function SettingItem({ data, settings, setSettings }) {
           <p className="text-sm text-gray-500">{description}</p>
         </div>
 
-        <Switch checked={settings[enabledKey]} onCheckedChange={toggleChecked} />
+        <Switch
+          checked={settings[enabledKey]}
+          onCheckedChange={toggleChecked}
+        />
       </div>
 
       {settings[enabledKey] && (
@@ -157,6 +160,7 @@ function SettingsSaveBtn({ settings }) {
         localStorage.setItem("settings", JSON.stringify(settings));
         toast.success("Modifica effettuata con successo");
       }}
+      className={"m-4"}
     >
       Salva impostazioni
     </Button>

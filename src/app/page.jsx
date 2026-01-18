@@ -143,7 +143,7 @@ function ProductContainer() {
 
 function ProductsActions({ settings, remaining, total, search, setSearch }) {
   return (
-    <div className="w-full flex flex-col gap-3 pt-1">
+    <div className="w-full flex flex-col gap-3">
       <Input
         placeholder="Cerca prodotto..."
         value={search}
