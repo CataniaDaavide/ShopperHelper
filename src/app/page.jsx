@@ -150,13 +150,15 @@ function ProductsActions({ settings, remaining, total, search, setSearch }) {
         value={search}
         iconLeft={<Search />}
         actionRight={
-          <Button
-            variant="ghost"
-            className="absolute right-1 flex items-center text-zinc-400 hover:text-primary hover:bg-transparent!"
-            onClick={() => setSearch("")}
-          >
-            <X size={16} />
-          </Button>
+          search?.length != 0 && (
+            <Button
+              variant="ghost"
+              className="absolute right-1 flex items-center text-zinc-400 hover:text-primary hover:bg-transparent!"
+              onClick={() => setSearch("")}
+            >
+              <X size={16} />
+            </Button>
+          )
         }
         onChange={(e) => setSearch(e.target.value)}
       />
