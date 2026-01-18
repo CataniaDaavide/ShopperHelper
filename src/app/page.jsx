@@ -45,6 +45,7 @@ import {
 } from "@/components/products-context";
 import { ModeToggle } from "@/components/mode-toggle";
 import ProductSuggestions from "@/components/product-suggestions";
+import { cn } from "@/lib/utils.js";
 //#endregion
 
 function fixDecimal(d) {
@@ -296,7 +297,8 @@ export function DeleteListBtn() {
         <Button
           variant="outline"
           size="icon"
-          className="cursor-pointer hover:text-red-500"
+          className={"cursor-pointer hover:text-red-500"}
+          disabled={products?.length === 0}
           onClick={() => setOpen(true)}
         >
           <Trash />
