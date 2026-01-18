@@ -6,7 +6,14 @@ import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { EuroIcon, Settings, ShoppingBag, Trash } from "lucide-react";
+import {
+  EuroIcon,
+  Search,
+  Settings,
+  ShoppingBag,
+  Trash,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
 import {
@@ -54,7 +61,7 @@ function floatToString(num) {
 
 export default function HomePage() {
   return (
-    <div className="w-full h-full flex flex-col gap-6">
+    <div className="w-full h-full flex flex-col">
       <Header />
       <ProductContainer />
     </div>
@@ -95,6 +102,8 @@ function ProductContainer() {
   );
   const [settings, setSettings] = useState(defaultSettings);
 
+  const [search, setSearch] = useState("");
+
   // Recupera settings dal localStorage
   useEffect(() => {
     const stored = localStorage.getItem("settings");
@@ -118,21 +127,39 @@ function ProductContainer() {
   }
 
   return (
-    <div className="w-full h-full overflow-y-auto flex flex-col px-3 gap-6">
+    <div className="w-full h-full overflow-y-auto flex flex-col gap-6 p-4">
       <ProductsActions
         settings={settings}
         remaining={remaining}
         total={total}
+        search={search}
+        setSearch={setSearch}
       />
-      <ProductListItems products={products} />
-      {/* {products.length === 0 ? <NoProducts /> : <ListProducts />} */}
+
+      <ProductListItems search={search} />
     </div>
   );
 }
 
-function ProductsActions({ settings, remaining, total }) {
+function ProductsActions({ settings, remaining, total, search, setSearch }) {
   return (
-    <div className="w-full flex flex-col gap-3">
+    <div className="w-full flex flex-col gap-3 pt-1">
+      <Input
+        placeholder="Cerca prodotto..."
+        value={search}
+        iconLeft={<Search />}
+        actionRight={
+          <Button
+            variant="ghost"
+            className="absolute right-1 flex items-center text-zinc-400 hover:text-primary hover:bg-transparent!"
+            onClick={() => setSearch("")}
+          >
+            <X size={16} />
+          </Button>
+        }
+        onChange={(e) => setSearch(e.target.value)}
+      />
+
       {/* action */}
       <div className="w-full flex items-center justify-between">
         <AddProducts />
@@ -157,8 +184,15 @@ function ProductsActions({ settings, remaining, total }) {
   );
 }
 
-function ProductListItems() {
+function ProductListItems({ search }) {
   const { products, setProducts } = useContext(ProductsContext);
+
+  const filteredProducts =
+    search.length < 2
+      ? products
+      : products.filter((p) =>
+          p.description.toLowerCase().includes(search.toLowerCase()),
+        );
 
   const toggleSelect = (index) => {
     const updated = [...products];
@@ -173,11 +207,11 @@ function ProductListItems() {
   };
 
   return (
-    <div className="w-full flex-1 overflow-y-auto flex flex-col px-3 gap-3">
+    <div className="w-full flex-1 overflow-y-auto flex flex-col gap-3">
       {products.length === 0 ? (
         <NoProducts />
       ) : (
-        products.map((item, index) => {
+        filteredProducts.map((item, index) => {
           return (
             <div className="w-full flex flex-col gap-3" key={index}>
               <ProductItem
@@ -223,7 +257,7 @@ function ProductItem({ item, index, updateItem, toggleSelect }) {
           {item.description}
         </span>
       </div>
-      <div className="col-span-2 w-full justify-center items-end flex flex-col items-center gap-1">
+      <div className="col-span-2 w-full justify-center items-end flex flex-col gap-1">
         <p>€{fixDecimal(item.price)}</p>
         <QuantityButton
           quantity={item.quantity}
