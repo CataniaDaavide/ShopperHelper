@@ -466,7 +466,7 @@ function AddProducts() {
       </DrawerTrigger>
 
       <DrawerContent className="flex items-center justify-center">
-        <div className="w-full max-w-md">
+        <div className="w-full max-w-md p-4">
           <DrawerHeader>
             <DrawerTitle>
               {editingIndex !== null
@@ -515,7 +515,7 @@ function AddProducts() {
                     type="tel"
                     inputMode="decimal"
                     placeholder="Inserisci prezzo"
-                    className="max-w-[150px]"
+                    className="max-w-[150px] rounded-r-none"
                   />
                   <Button variant="outline">
                     <EuroIcon />
