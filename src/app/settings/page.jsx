@@ -25,6 +25,16 @@ export const settingsData = [
       mealVoucherValue: 0,
     },
   },
+  {
+    name: "calculateSelected",
+    title: "Calcolo totale",
+    description:
+      "Calcola il totale solo sui prodotti selezionati invece che su tutti",
+    inputInfo: null,
+    default: {
+      calculateSelectedEnabled: false,
+    },
+  },
 ];
 
 export default function SettingsPage() {
@@ -100,7 +110,6 @@ function Settings({ settings, setSettings }) {
 
 function SettingItem({ data, settings, setSettings }) {
   const { name, title, description, inputInfo } = data;
-  const { id, field, type, placeholder } = inputInfo;
 
   const enabledKey = `${name}Enabled`;
   const valueKey = `${name}Value`;
@@ -134,18 +143,18 @@ function SettingItem({ data, settings, setSettings }) {
         />
       </div>
 
-      {settings[enabledKey] && (
+      {settings[enabledKey] && inputInfo && (
         <div className="flex flex-col gap-1">
-          <label className="font-medium" htmlFor={id}>
-            {field}
+          <label className="font-medium" htmlFor={inputInfo.id}>
+            {inputInfo.field}
           </label>
           <Input
-            id={id}
-            type={type}
+            id={inputInfo.id}
+            type={inputInfo.type}
             inputMode="decimal"
             value={settings[valueKey]}
             onChange={handleValueChange}
-            placeholder={placeholder}
+            placeholder={inputInfo.placeholder}
           />
         </div>
       )}

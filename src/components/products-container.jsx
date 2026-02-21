@@ -29,7 +29,14 @@ export function ProductsContainer() {
 
   if (!products) return <Spinner />;
 
-  const total = products.reduce((acc, p) => acc + p.price * p.quantity, 0);
+  const listForTotal = settings?.calculateSelectedEnabled
+    ? products.filter((p) => p.selected)
+    : products;
+
+  const total = listForTotal.reduce(
+    (acc, p) => acc + p.price * p.quantity,
+    0
+  );
 
   let remaining = 0;
   if (settings.mealVoucherEnabled && settings.mealVoucherValue > 0 && total > 0) {
