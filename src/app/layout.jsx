@@ -5,8 +5,13 @@ import { ProductsProvider } from "@/components/products-context";
 
 export const metadata = {
   title: "ShopperHelper",
-  description:
-    "Applicazione per facilitare il conteggio dei buoni pasto durante la spesa",
+  description: "WebApp che ha il compito di semplificare la creazione di liste della spesa e gestire i totali calcolando i buoni pasto",
+  manifest: "/manifest.json",
+  icons: {
+    icon: "/icon.png",
+    apple: "/icon.png",
+    shortcut: "/icon.png",
+  },
 };
 
 export default function RootLayout({ children }) {
