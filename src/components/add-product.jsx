@@ -2,11 +2,20 @@
 
 import { useContext, useState, useEffect } from "react";
 import { ProductsContext } from "@/components/products-context";
-import { Drawer, DrawerTrigger, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerFooter, DrawerClose } from "@/components/ui/drawer";
+import {
+  Drawer,
+  DrawerTrigger,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerClose,
+} from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
-import { Trash, EuroIcon } from "lucide-react";
+import { Trash, EuroIcon, X } from "lucide-react";
 import QuantityButton from "@/components/quantity-button";
 
 function fixDecimal(d) {
@@ -82,9 +91,10 @@ export function AddProduct() {
       selected: false,
     };
 
-    let updatedProducts = editingIndex !== null
-      ? products.map((p, i) => (i === editingIndex ? newProduct : p))
-      : [...products, newProduct];
+    let updatedProducts =
+      editingIndex !== null
+        ? products.map((p, i) => (i === editingIndex ? newProduct : p))
+        : [...products, newProduct];
 
     setProducts(updatedProducts);
     localStorage.setItem("products", JSON.stringify(updatedProducts));
@@ -102,14 +112,22 @@ export function AddProduct() {
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild>
-        <Button>{editingIndex !== null ? "Modifica prodotto" : "Aggiungi prodotti"}</Button>
+        <Button>
+          {editingIndex !== null ? "Modifica prodotto" : "Aggiungi prodotti"}
+        </Button>
       </DrawerTrigger>
 
       <DrawerContent className="flex items-center justify-center">
         <div className="w-full max-w-md p-4">
           <DrawerHeader>
-            <DrawerTitle>{editingIndex !== null ? "Modifica prodotto" : "Aggiungi prodotto"}</DrawerTitle>
-            <DrawerDescription>Inserisci le informazioni del prodotto</DrawerDescription>
+            <DrawerTitle>
+              {editingIndex !== null
+                ? "Modifica prodotto"
+                : "Aggiungi prodotto"}
+            </DrawerTitle>
+            <DrawerDescription>
+              Inserisci le informazioni del prodotto
+            </DrawerDescription>
           </DrawerHeader>
 
           <div className="flex flex-col gap-3 p-4">
@@ -122,6 +140,17 @@ export function AddProduct() {
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Inserisci descrizione"
                   onKeyPress={handleKeyPress}
+                  actionRight={
+                    description?.length !== 0 && (
+                      <Button
+                        variant="ghost"
+                        className="absolute right-1 flex items-center text-zinc-400 hover:text-primary hover:bg-transparent!"
+                        onClick={() => setDescription("")}
+                      >
+                        <X size={16} />
+                      </Button>
+                    )
+                  }
                 />
                 <Button
                   variant="outline"
@@ -161,9 +190,13 @@ export function AddProduct() {
           </div>
 
           <DrawerFooter>
-            <Button onClick={handleSubmit}>{editingIndex !== null ? "Modifica" : "Aggiungi"}</Button>
+            <Button onClick={handleSubmit}>
+              {editingIndex !== null ? "Modifica" : "Aggiungi"}
+            </Button>
             <DrawerClose asChild>
-              <Button variant="outline" className="w-full">Annulla</Button>
+              <Button variant="outline" className="w-full">
+                Annulla
+              </Button>
             </DrawerClose>
           </DrawerFooter>
         </div>

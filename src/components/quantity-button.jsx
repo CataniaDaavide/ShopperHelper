@@ -28,13 +28,28 @@ export default function QuantityButton({ quantity, setQuantity }) {
 
   return (
     <div className="flex">
-      <Button disabled={disableMinus} variant="outline" onClick={minus}>
+      <Button
+        disabled={disableMinus}
+        variant="outline"
+        onDoubleClick={(e) => e.stopPropagation()}
+        onClick={minus}
+      >
         <Minus />
       </Button>
-      <Button variant={"outline"} size={"icon"} className={"border-none shadow-none bg-transparent! hover:bg-transparent!"}>
+      <Button
+        variant={"outline"}
+        size={"icon"}
+        className={
+          "border-none shadow-none bg-transparent! hover:bg-transparent!"
+        }
+      >
         {quantity}
       </Button>
-      <Button variant="outline" onClick={add}>
+      <Button
+        variant="outline"
+        onDoubleClick={(e) => e.stopPropagation()}
+        onClick={add}
+      >
         <Plus />
       </Button>
     </div>

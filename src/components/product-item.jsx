@@ -14,16 +14,19 @@ export function ProductItem({ item, index, updateItem, toggleSelect }) {
   };
 
   return (
-    <div className="w-full grid grid-cols-5 gap-3">
+    <div
+      className="w-full grid grid-cols-5 gap-3"
+      onDoubleClick={handleDoubleClick}
+    >
       <div className="col-span-3 flex gap-3">
         <Checkbox
           className="w-6 h-6"
           checked={item.selected || false}
+          onDoubleClick={(e) => e.stopPropagation()}
           onCheckedChange={() => toggleSelect(index)}
         />
         <span
           className={`cursor-pointer break-all ${item.selected ? "line-through" : ""}`}
-          onDoubleClick={handleDoubleClick}
         >
           {item.description}
         </span>
