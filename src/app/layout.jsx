@@ -3,6 +3,14 @@ import "./globals.css";
 import { ToasterClient } from "@/components/toaster-client";
 import { ProductsProvider } from "@/components/products-context";
 
+// Serve per non fare zoommare la pagina da mobile (qundo si fa il doppio click)
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
 export const metadata = {
   title: "ShopperHelper",
   description: "WebApp che ha il compito di semplificare la creazione di liste della spesa e gestire i totali calcolando i buoni pasto",

@@ -22,7 +22,7 @@ function fixDecimal(d) {
   return d.toFixed(2).replace(".", ",");
 }
 
-export function AddProduct() {
+export function AddProduct({ initialDescription = "" }) {
   const { products, setProducts } = useContext(ProductsContext);
   const [isOpen, setIsOpen] = useState(false);
   const [description, setDescription] = useState("");
@@ -43,6 +43,15 @@ export function AddProduct() {
     window.addEventListener("edit-product", handler);
     return () => window.removeEventListener("edit-product", handler);
   }, [products]);
+
+  // Apre il drawer per un nuovo prodotto precompilando la descrizione con initialDescription
+  const handleOpenNew = () => {
+    setDescription(initialDescription);
+    setPrice("0");
+    setQuantity(1);
+    setEditingIndex(null);
+    setIsOpen(true);
+  };
 
   const handleKeyPress = (e) => {
     const key = e.key;
@@ -112,7 +121,7 @@ export function AddProduct() {
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild>
-        <Button>
+        <Button onClick={handleOpenNew}>
           {editingIndex !== null ? "Modifica prodotto" : "Aggiungi prodotti"}
         </Button>
       </DrawerTrigger>

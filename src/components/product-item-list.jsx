@@ -15,6 +15,14 @@ export function ProductItemsList({ search }) {
           p.description.toLowerCase().includes(search.toLowerCase())
         );
 
+  // Ordina mantenendo la stabilita': i selezionati vanno in cima, i non selezionati in fondo.
+  // L'ordinamento e' stabile: l'ordine relativo all'interno dei due gruppi e' preservato.
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    const aSelected = a.selected ? 1 : 0;
+    const bSelected = b.selected ? 1 : 0;
+    return bSelected - aSelected;
+  });
+
   const toggleSelect = (index) => {
     const updated = [...products];
     updated[index].selected = !updated[index].selected;
@@ -32,7 +40,8 @@ export function ProductItemsList({ search }) {
       {products.length === 0 ? (
         <NoProducts />
       ) : (
-        filteredProducts.map((item) => {
+        sortedProducts.map((item) => {
+          // Recupera sempre l'indice originale nell'array products per updateItem e toggleSelect
           const index = products.findIndex((p) => p === item);
           return (
             <div className="w-full flex flex-col gap-3" key={index}>

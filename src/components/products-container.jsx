@@ -12,7 +12,7 @@ function fixDecimal(d) {
 }
 
 export function ProductsContainer() {
-  const { products } = useContext(ProductsContext);
+  const { products, setProducts } = useContext(ProductsContext);
 
   const defaultSettings = settingsData.reduce(
     (acc, item) => ({ ...acc, ...item.default }),
@@ -44,6 +44,15 @@ export function ProductsContainer() {
     remaining = modulo === 0 ? 0 : settings.mealVoucherValue - modulo;
   }
 
+  // Stato derivato per la checkbox "seleziona tutti"
+  const allSelected = products.length > 0 && products.every((p) => p.selected);
+  const someSelected = products.some((p) => p.selected);
+
+  // Seleziona tutti o deseleziona tutti in base allo stato corrente
+  const handleToggleAll = () => {
+    setProducts(products.map((p) => ({ ...p, selected: !allSelected })));
+  };
+
   return (
     <div className="w-full h-full overflow-y-auto flex flex-col gap-6 p-4">
       <ProductsActions
@@ -52,6 +61,9 @@ export function ProductsContainer() {
         total={total}
         search={search}
         setSearch={setSearch}
+        allSelected={allSelected}
+        someSelected={someSelected}
+        onToggleAll={handleToggleAll}
       />
       <ProductItemsList search={search} />
     </div>

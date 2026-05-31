@@ -2,6 +2,7 @@
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { X, Search } from "lucide-react";
 import { AddProduct } from "@/components/add-product";
 import { DeleteListBtn } from "@/components//delete-list-btn";
@@ -11,7 +12,7 @@ function fixDecimal(d) {
   return d.toFixed(2).replace(".", ",");
 }
 
-export function ProductsActions({ settings, remaining, total, search, setSearch }) {
+export function ProductsActions({ settings, remaining, total, search, setSearch, allSelected, someSelected, onToggleAll }) {
   return (
     <div className="w-full flex flex-col gap-3">
       <Input
@@ -33,7 +34,7 @@ export function ProductsActions({ settings, remaining, total, search, setSearch 
       />
 
       <div className="w-full flex items-center justify-between">
-        <AddProduct />
+        <AddProduct initialDescription={search} />
         <div className="flex items-center gap-3">
           {settings?.mealVoucherEnabled && (
             <ProductSuggestions remaining={remaining} />
@@ -42,11 +43,23 @@ export function ProductsActions({ settings, remaining, total, search, setSearch 
         </div>
       </div>
 
-      <div className="w-full flex items-center justify-end gap-3">
-        <p className="font-bold text-lg">Totale: €{fixDecimal(total)}</p>
-        {settings?.mealVoucherEnabled && remaining > 0 && (
-          <p className="text-orange-500 font-semibold">€{fixDecimal(remaining)}</p>
-        )}
+      <div className="w-full flex items-center justify-between gap-3">
+        {/* Checkbox per selezionare/deselezionare tutti i prodotti */}
+        <div className="flex items-center gap-2">
+          <Checkbox
+            className="w-6 h-6"
+            checked={allSelected ? true : someSelected ? "indeterminate" : false}
+            onCheckedChange={onToggleAll}
+          />
+          <span className="text-sm text-zinc-500">Seleziona tutti</span>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <p className="font-bold text-lg">Totale: €{fixDecimal(total)}</p>
+          {settings?.mealVoucherEnabled && remaining > 0 && (
+            <p className="text-orange-500 font-semibold">€{fixDecimal(remaining)}</p>
+          )}
+        </div>
       </div>
     </div>
   );
