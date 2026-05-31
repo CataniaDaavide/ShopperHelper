@@ -13,7 +13,8 @@ export const viewport = {
 
 export const metadata = {
   title: "ShopperHelper",
-  description: "WebApp che ha il compito di semplificare la creazione di liste della spesa e gestire i totali calcolando i buoni pasto",
+  description:
+    "WebApp che ha il compito di semplificare la creazione di liste della spesa e gestire i totali calcolando i buoni pasto",
   manifest: "/manifest.json",
   icons: {
     icon: "/icon.png",
@@ -25,7 +26,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className="w-full h-full" suppressHydrationWarning>
-      <body className={`w-full h-full antialiased`}>
+      <body
+        className={`w-full h-full antialiased overscroll-none overflow-hidden`}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
