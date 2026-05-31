@@ -3,6 +3,7 @@
 import { useContext, useEffect, useState } from "react";
 import { ProductsContext } from "@/components/products-context";
 import { Spinner } from "@/components/ui/spinner";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { ProductsActions } from "./products-actions";
 import { ProductItemsList } from "./product-item-list";
 import { settingsData } from "@/app/settings/page.jsx";
@@ -54,7 +55,7 @@ export function ProductsContainer() {
   };
 
   return (
-    <div className="w-full h-full overflow-y-auto flex flex-col gap-6 p-4">
+    <div className="w-full h-full flex flex-col gap-6 p-4 overflow-hidden">
       <ProductsActions
         settings={settings}
         remaining={remaining}
@@ -65,7 +66,9 @@ export function ProductsContainer() {
         someSelected={someSelected}
         onToggleAll={handleToggleAll}
       />
-      <ProductItemsList search={search} />
+      <ScrollArea className="flex-1 min-h-0 w-full" noscrollbar>
+        <ProductItemsList search={search} />
+      </ScrollArea>
     </div>
   );
 }

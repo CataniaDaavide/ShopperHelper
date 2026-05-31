@@ -36,7 +36,7 @@ export function ProductItemsList({ search }) {
   };
 
   return (
-    <div className="w-full flex-1 overflow-y-auto flex flex-col gap-3">
+    <div className="w-full flex flex-col gap-3">
       {products.length === 0 ? (
         <NoProducts />
       ) : (
