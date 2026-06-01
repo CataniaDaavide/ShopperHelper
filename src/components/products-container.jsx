@@ -7,6 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { ProductsActions } from "./products-actions";
 import { ProductItemsList } from "./product-item-list";
 import { settingsData } from "@/app/settings/page.jsx";
+import { cn } from "@/lib/utils";
 
 function fixDecimal(d) {
   return d.toFixed(2).replace(".", ",");
@@ -17,7 +18,7 @@ export function ProductsContainer() {
 
   const defaultSettings = settingsData.reduce(
     (acc, item) => ({ ...acc, ...item.default }),
-    {}
+    {},
   );
   const [settings, setSettings] = useState(defaultSettings);
   const [search, setSearch] = useState("");
@@ -34,13 +35,14 @@ export function ProductsContainer() {
     ? products.filter((p) => p.selected)
     : products;
 
-  const total = listForTotal.reduce(
-    (acc, p) => acc + p.price * p.quantity,
-    0
-  );
+  const total = listForTotal.reduce((acc, p) => acc + p.price * p.quantity, 0);
 
   let remaining = 0;
-  if (settings.mealVoucherEnabled && settings.mealVoucherValue > 0 && total > 0) {
+  if (
+    settings.mealVoucherEnabled &&
+    settings.mealVoucherValue > 0 &&
+    total > 0
+  ) {
     const modulo = total % settings.mealVoucherValue;
     remaining = modulo === 0 ? 0 : settings.mealVoucherValue - modulo;
   }
@@ -54,6 +56,13 @@ export function ProductsContainer() {
     setProducts(products.map((p) => ({ ...p, selected: !allSelected })));
   };
 
+  const filteredProducts =
+    search.length < 2
+      ? products
+      : products.filter((p) =>
+          p.description.toLowerCase().includes(search.toLowerCase()),
+        );
+
   return (
     <div className="w-full h-full flex flex-col gap-6 p-4 overflow-hidden">
       <ProductsActions
@@ -66,7 +75,12 @@ export function ProductsContainer() {
         someSelected={someSelected}
         onToggleAll={handleToggleAll}
       />
-      <ScrollArea className="flex-1 min-h-0 w-full" noscrollbar>
+      <ScrollArea
+        className={cn(
+          "flex-1 min-h-0 w-full",
+          filteredProducts.length >= 3 ? "pr-1" : "",
+        )}
+      >
         <ProductItemsList search={search} />
       </ScrollArea>
     </div>
