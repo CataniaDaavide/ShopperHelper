@@ -78,7 +78,7 @@ export function ProductsContainer() {
       <ScrollArea
         className={cn(
           "flex-1 min-h-0 w-full",
-          filteredProducts.length >= 3 ? "pr-1" : "",
+          filteredProducts.length >= 3 ? "pr-3" : "",
         )}
       >
         <ProductItemsList search={search} />
