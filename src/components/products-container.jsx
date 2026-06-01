@@ -75,12 +75,7 @@ export function ProductsContainer() {
         someSelected={someSelected}
         onToggleAll={handleToggleAll}
       />
-      <ScrollArea
-        className={cn(
-          "flex-1 min-h-0 w-full",
-          filteredProducts.length >= 3 ? "pr-3" : "",
-        )}
-      >
+      <ScrollArea className="flex-1 min-h-0 w-full">
         <ProductItemsList search={search} />
       </ScrollArea>
     </div>
